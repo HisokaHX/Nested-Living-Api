@@ -13,6 +13,14 @@ const houseSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    rooms: {
+        type: Number,
+        required: true,
+    },
+    people: {
+        type: Number,
+        required: true,
+    },
     location: {
         type: String,
         required: true,
@@ -28,7 +36,7 @@ const houseSchema = new mongoose.Schema({
     images: {
         type: [String], // Lista de URLs de imágenes
     },
-    
+
 });
 
 const House = mongoose.model('House', houseSchema);

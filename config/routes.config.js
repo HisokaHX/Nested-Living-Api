@@ -10,6 +10,7 @@ router.post('/users', usersController.create);
 router.get('/users/me', authMiddleware.isAuthenticated, usersController.getCurrentUser);
 
 //House
-router.post('/houses', housesController.createHouse);
+router.get('/houses', housesController.getHouse)
+router.post('/houses',authMiddleware.isAuthenticated, housesController.createHouse);
 
 module.exports = router;
