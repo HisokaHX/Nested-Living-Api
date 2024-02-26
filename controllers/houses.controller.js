@@ -2,7 +2,7 @@ const House = require("../models/House.model");
 const { statusCodes, StatusCodes } = require("http-status-codes");
 
 module.exports.createHouse = ( req, res, next) => {
-    House.create(req.body)
+    House.create({...req.body, owner: req.currentUserId})
     .then(createdHouse => {
         res.status(StatusCodes.CREATED).json(createdHouse)
     })
