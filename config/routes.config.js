@@ -3,7 +3,8 @@ const usersController = require("../controllers/users.controller")
 const authController = require("../controllers/auth.controller");
 const housesController = require("../controllers/houses.controller");
 const authMiddleware = require("../middlewares/auth.middleware");
-const orderingController = require("../controllers/ordering.controller")
+const orderingController = require("../controllers/ordering.controller");
+const upload = require('./storage.config');
 
 router.post('/login', authController.login);
 
@@ -12,7 +13,7 @@ router.get('/users/me', authMiddleware.isAuthenticated, usersController.getCurre
 
 //House
 router.get('/houses', housesController.getHouse)
-router.post('/houses',authMiddleware.isAuthenticated, housesController.createHouse);
+router.post('/houses',upload.array('images', 10),authMiddleware.isAuthenticated, housesController.createHouse);
 
 //Order
 
