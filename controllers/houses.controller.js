@@ -2,7 +2,8 @@ const House = require("../models/House.model");
 const { statusCodes, StatusCodes } = require("http-status-codes");
 
 module.exports.createHouse = ( req, res, next) => {
-    House.create({...req.body, owner: req.currentUserId })
+    const images = req.files ? req.files.map(file => file.path) : [];
+    House.create({...req.body, owner: req.currentUserId, images})
     .then(createdHouse => {
         res.status(StatusCodes.CREATED).json(createdHouse)
     })
