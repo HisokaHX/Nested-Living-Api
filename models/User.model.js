@@ -41,6 +41,12 @@ const userSchema = mongoose.Schema(
     }
 );
 
+userSchema.virtual('houses', {
+    ref: "House",
+    localField: "_id",
+    foreignField: "userId",
+});
+
 
 // Crear el metodo para comparar contraseñas
 
