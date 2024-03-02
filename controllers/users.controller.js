@@ -38,3 +38,4 @@ const getUser = (id, req, res, next) => {
 module.exports.getCurrentUser = (req, res, next) => {
     getUser(req.currentUserId, req, res, next);
 }
+

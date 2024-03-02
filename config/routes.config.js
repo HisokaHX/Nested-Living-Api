@@ -14,6 +14,8 @@ router.get('/users/me', authMiddleware.isAuthenticated, usersController.getCurre
 //House
 router.get('/houses', housesController.getHouse)
 router.post('/houses',upload.array('images', 10),authMiddleware.isAuthenticated, housesController.createHouse);
+router.get('/houses/me', authMiddleware.isAuthenticated, housesController.getMyHouses);
+router.get('/houses/:id', authMiddleware.isAuthenticated, housesController.getHouseDetail);
 
 //Order
 
