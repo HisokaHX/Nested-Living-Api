@@ -35,6 +35,7 @@ const houseSchema = new mongoose.Schema({
     },
     images: {
         type: [String], // Lista de URLs de imágenes
+        default: 'https://cdn.iconscout.com/icon/free/png-256/free-avatar-370-456322.png',
     },
 
 });

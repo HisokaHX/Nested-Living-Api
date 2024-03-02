@@ -17,3 +17,22 @@ House.find()
 })
 .catch(next)
 }
+
+module.exports.getMyHouses = (req, res, next) => {
+House.find({ owner: req.currentUserId })
+.then((houses) => {
+    res.status(StatusCodes.OK).json(houses)
+})
+.catch(next)
+}
+
+module.exports.getHouseDetail = (req, res, next) => {
+House.findById(req.params.id)
+.then((house) => {
+    if (!house) {
+        return res.status(StatusCodes.NOT_FOUND).json({ message: 'House not found' });
+    }
+    res.status(StatusCodes.OK).json(house);
+})
+.catch(next)
+}
