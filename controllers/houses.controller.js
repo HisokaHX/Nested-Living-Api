@@ -1,5 +1,6 @@
 const House = require("../models/House.model");
-const { statusCodes, StatusCodes } = require("http-status-codes");
+const { StatusCodes } = require("http-status-codes");
+const Like = require("../models/Like.model");
 
 module.exports.createHouse = ( req, res, next) => {
     const images = req.files ? req.files.map(file => file.path) : [];
@@ -9,6 +10,12 @@ module.exports.createHouse = ( req, res, next) => {
     })
     .catch(next)
 }
+
+
+
+
+
+
 
 module.exports.getHouse = (req, res, next) => {
 House.find()
