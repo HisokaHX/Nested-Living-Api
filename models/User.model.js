@@ -26,6 +26,23 @@ const userSchema = mongoose.Schema(
             required: [true, "required field"],
             minlength: [8, "invalid length"],
         },
+        avatar: {
+            type: String,
+            default: 'https://cdn.iconscout.com/icon/free/png-256/free-avatar-370-456322.png'
+        },
+        activationToken: {
+            type: String,
+            default: () => {
+                return (
+                    Math.random().toString(36).substring(2, 15) +
+                    Math.random().toString(36).substring(2, 15)
+                );
+            },
+        },
+        isActive: {
+            type: Boolean,
+            default: false,
+        },
     },
     {
         timestamps: true,
@@ -43,6 +60,12 @@ const userSchema = mongoose.Schema(
 
 userSchema.virtual('houses', {
     ref: "House",
+    localField: "_id",
+    foreignField: "userId",
+});
+
+userSchema.virtual('likes', {
+    ref: "Like",
     localField: "_id",
     foreignField: "userId",
 });
