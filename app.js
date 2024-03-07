@@ -7,6 +7,9 @@ const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const createError = require('http-errors');
 const { StatusCodes } = require('http-status-codes');
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const bodyParser = require('body-parser');
+
 
 // Base de datos
 
@@ -16,6 +19,11 @@ require('./config/db.config');
 
 const app = express();
 
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
+
+
+
 app.use(cors({
     origin: process.env.CORS_ORIGIN || 'http://localhost:5173'
 }));
@@ -23,6 +31,8 @@ app.use(express.json());
 app.use(logger('dev'));
 
 // Rutas
+
+
 
 const routes = require('./config/routes.config');
 app.use('/api', routes);
