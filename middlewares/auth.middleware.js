@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const createError = require('http-errors');
 const { StatusCodes } = require('http-status-codes');
+const User = require('../models/User.model');
 
 module.exports.isAuthenticated = (req, res, next) => {
     // Mirar la cabecera/header de authorization
@@ -35,3 +36,25 @@ module.exports.isAuthenticated = (req, res, next) => {
         }
     )
 }
+
+module.exports.isAdmin = (req, res, next) => {
+    //req.currentUserId
+    if (!req.currentUserId) {
+        return next(createError(StatusCodes.UNAUTHORIZED, "You are not authenticated"));
+    }
+
+    User.findById(req.currentUserId)
+        .then(user => {
+            if (!user) {
+                return next(createError(StatusCodes.NOT_FOUND, "User not found"));
+            }
+
+
+            if (user.role !== "admin") {
+                return next(createError(StatusCodes.FORBIDDEN, "You are not allowed to access this resource"));
+            }
+
+            next()
+        })
+        .catch(next);
+};

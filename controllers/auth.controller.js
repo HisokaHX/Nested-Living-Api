@@ -43,6 +43,8 @@ const jwt = require("jsonwebtoken");
 const createError = require("http-errors");
 const { StatusCodes } = require("http-status-codes");
 const User = require("../models/User.model");
+
+
 module.exports.login = async (req, res, next) => {
     try {
         const { email, password } = req.body;

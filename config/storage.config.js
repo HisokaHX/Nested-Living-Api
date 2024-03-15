@@ -13,7 +13,7 @@ const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
         folder: "nestedLiving",
-        allowedFormats: ["jpg", "png"],
+        allowedFormats: ["jpg", "png", "jpeg"],
     },
 });
 
