@@ -26,6 +26,11 @@ const userSchema = mongoose.Schema(
             required: [true, "required field"],
             minlength: [8, "invalid length"],
         },
+        role: {
+            type: String,
+            enum: ['admin', 'user'],
+            default: 'user',
+        },
         avatar: {
             type: String,
             default: 'https://cdn.iconscout.com/icon/free/png-256/free-avatar-370-456322.png'
@@ -69,6 +74,13 @@ userSchema.virtual('likes', {
     localField: "_id",
     foreignField: "userId",
 });
+
+userSchema.virtual('comments', {
+    ref: 'Comment',
+    localField: '_id',
+    foreignField: 'receiver',
+    justOne: false
+})
 
 
 // Crear el metodo para comparar contraseñas

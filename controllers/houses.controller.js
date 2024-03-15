@@ -13,7 +13,23 @@ module.exports.createHouse = ( req, res, next) => {
 }
 
 module.exports.getHouse = (req, res, next) => {
-House.find()
+    console.log(req.query)
+    let searchCriteria = {}
+    if (req.query.people) {
+        searchCriteria.people = req.query.people
+    }
+    if (req.query.location) {
+        searchCriteria.location = { $regex: new RegExp(req.query.location, 'i') };
+    }
+    if (req.query.startDate) {
+        // Ajusta la propiedad en tu esquema de datos según sea necesario
+        searchCriteria.startDate = { $lte: new Date(req.query.startDate) };
+    }
+    if (req.query.endDate) {
+        // Ajusta la propiedad en tu esquema de datos según sea necesario
+        searchCriteria.endDate = { $gte: new Date(req.query.endDate) };
+    }
+House.find(searchCriteria)
 .then((houses) => {
     res.status(StatusCodes.OK).json(houses)
 })
@@ -30,6 +46,7 @@ House.find({ owner: req.currentUserId })
 
 module.exports.getHouseDetail = (req, res, next) => {
 House.findById(req.params.id)
+    .populate({ path: 'comments', populate: { path: 'writer' } })
 .then((house) => {
     if (!house) {
         return res.status(StatusCodes.NOT_FOUND).json({ message: 'House not found' });
@@ -47,29 +64,58 @@ module.exports.editHouse = (req, res, next) => {
         .catch(next)
 }
 
+module.exports.deleteHouse = (req, res, next) => {
+    House.findByIdAndDelete(req.params.id)
+        .then(deletedHouse => {
+            if (!deletedHouse) {
+                return res.status(StatusCodes.NOT_FOUND).json({ message: 'House not found' });
+            }
+            res.json({ message: 'House deleted successfully' });
+        })
+        .catch(next);
+}
+
+
 module.exports.createCheckoutSession = async (req, res, next) => {
-    const {houseId, title, description, price, images} = req.body;
+    const { id } = req.params;
+    const { startDate, endDate } = req.body;
 
-    const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        line_items: [
-            {
-                price_data: {
-                    currency: 'eur',
-                    product_data: {
-                        name: title,
-                        description: description,
-                        images: [images]
+    try {
+        const house = await House.findById(id);
+        const { title, description, price, images } = house;
+        console.log(images)
+
+        const oneDay = 24 * 60 * 60 * 1000;
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const days = Math.round(Math.abs((end - start) / oneDay));
+
+        const totalPrice = parseFloat(price) * days* 100;
+
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: [
+                {
+                    price_data: {
+                        currency: 'eur',
+                        product_data: {
+                            name: title,
+                            description: description,
+                            images: images
+                        },
+                        unit_amount: totalPrice,
                     },
-                    unit_amount: parseFloat(price) * 100,
+                    quantity: 1,
                 },
-                quantity: 1,
-            },
-        ],
-        mode: 'payment',
-        success_url: `${process.env.CORS_ORIGIN}/checkout/${houseId}?success=true`,
-        cancel_url: `${process.env.CORS_ORIGIN}/checkout/${houseId}?canceled=true`,
-    });
+            ],
+            mode: 'payment',
+            success_url: `${process.env.CORS_ORIGIN}/checkout/${id}?success=true`,
+            cancel_url: `${process.env.CORS_ORIGIN}/houses/${id}`,
+        });
 
-    res.json({url: session.url});
+        res.json({ url: session.url, totalPrice: totalPrice / 100 });
+        res.redirect(303, `${process.env.CORS_ORIGIN}/checkout/${id}?success=true`);
+    } catch (error) {
+        next(error);
+    }
 }

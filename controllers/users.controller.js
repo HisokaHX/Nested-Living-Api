@@ -99,6 +99,26 @@ module.exports.getCurrentUser = (req, res, next) => {
 
 };
 
+module.exports.getAllUsers = (req, res, next) => {
+    User.find()
+        .then(users => {
+            res.json(users);
+        })
+        .catch(next);
+}
+
+module.exports.deleteUser = (req, res, next) => {
+    const userId = req.params.id;
+    User.findByIdAndDelete(userId)
+        .then(deletedUser => {
+            if (!deletedUser) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+            res.json({ message: 'User deleted successfully' });
+        })
+        .catch(next);
+}
+
 
 
 

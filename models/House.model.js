@@ -33,12 +33,27 @@ const houseSchema = new mongoose.Schema({
         ref: 'User', // Referencia al modelo de usuarios
         required: true,
     },
+    startDate: {
+        type: Date,
+        required: true,
+    },
+    endDate: {
+        type: Date,
+        required: true,
+    },
     images: {
         type: [String], // Lista de URLs de imágenes
         default: 'https://cdn.iconscout.com/icon/free/png-256/free-avatar-370-456322.png',
     },
 
 });
+
+houseSchema.virtual('comments', {
+    ref: 'Comment',
+    localField: '_id',
+    foreignField: 'House',
+    justOne: false
+})
 
 const House = mongoose.model('House', houseSchema);
 module.exports = House;
