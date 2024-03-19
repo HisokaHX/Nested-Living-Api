@@ -109,13 +109,39 @@ module.exports.createCheckoutSession = async (req, res, next) => {
                 },
             ],
             mode: 'payment',
-            success_url: `${process.env.CORS_ORIGIN}/checkout/${id}?success=true`,
+            success_url: `${process.env.CORS_ORIGIN}/checkout/${id}/success`,
             cancel_url: `${process.env.CORS_ORIGIN}/houses/${id}`,
         });
 
         res.json({ url: session.url, totalPrice: totalPrice / 100 });
-        res.redirect(303, `${process.env.CORS_ORIGIN}/checkout/${id}?success=true`);
+        res.redirect(303, `${process.env.CORS_ORIGIN}/checkout/${id}/success`);
     } catch (error) {
+        next(error);
+    }
+}
+
+module.exports.handlePaymentSuccess = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        // Trova la casa corrispondente nell'ID del pagamento
+        const house = await House.findById(id);
+
+        if (!house) {
+            return res.status(404).json({ message: 'House not found' });
+        }
+
+        // Aggiorna lo stato del pagamento o della prenotazione della casa nel database
+        house.paymentStatus = 'Paid';
+        await house.save();
+
+        // Invia una notifica di conferma di pagamento all'utente
+        // Questo potrebbe essere un'email, un messaggio di testo o una notifica nell'app
+
+        // Invia una risposta di successo al client
+        res.status(200).json({ message: 'Payment confirmed successfully' });
+    } catch (error) {
+        // Se si verifica un errore, passalo al gestore degli errori
         next(error);
     }
 }

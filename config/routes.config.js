@@ -31,6 +31,7 @@ router.get('/houses/:id', authMiddleware.isAuthenticated, housesController.getHo
 router.put('/houses/:id', authMiddleware.isAuthenticated, housesController.editHouse);
 router.delete('/houses/:id', authMiddleware.isAuthenticated, housesController.deleteHouse);
 router.post('/houses/checkout/:id', authMiddleware.isAuthenticated, housesController.createCheckoutSession);
+router.post('/checkout/:id/success', authMiddleware.isAuthenticated, housesController.handlePaymentSuccess);
 //Order
 
 router.post('/ordering', authMiddleware.isAuthenticated, orderingController.createOrdering);
@@ -56,5 +57,6 @@ router.post('/chats/:userId', authMiddleware.isAuthenticated, chatController.cre
 
 //Like
 router.post('/likes/:houseId', authMiddleware.isAuthenticated, likesController.toggleLike);
+router.get('/likes', authMiddleware.isAuthenticated, likesController.getMyLikes);
 
 module.exports = router;
