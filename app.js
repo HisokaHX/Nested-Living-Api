@@ -25,7 +25,7 @@ app.use(bodyParser.json())
 
 
 app.use(cors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:5173'
+    origin: process.env.CORS_ORIGIN || 'https://nested-living.netlify.app'
 }));
 app.use(express.json());
 app.use(logger('dev'));
